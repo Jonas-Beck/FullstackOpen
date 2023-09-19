@@ -1,27 +1,36 @@
 import { useState } from "react"
 
 const Button = ({ handleClick, text }) => <button onClick={handleClick}>{text}</button>
-const StatisticsLine = ({text, value}) => <p>{text} {value}</p>
+const StatisticsLine = ({ text, value }) => (
+    <tr>
+        <td>{text}</td>
+        <td>{value}</td>
+    </tr>
+)
 
 const Statistics = ({ good, neutral, bad }) => {
     const total = good + neutral + bad
-    const average = ((bad * -1) + good) / total
-    const positive = good / total * 100
+    const average = (bad * -1 + good) / total
+    const positive = (good / total) * 100
     if (good == 0 && neutral == 0 && bad == 0) {
-        return (
-            <p>No feedback given</p>
-        )
+        return <p>No feedback given</p>
     }
     return (
-        <div>
-            <h2>Statistics</h2>
-            <StatisticsLine text="good" value={good} />
-            <StatisticsLine text="neutral" value={neutral} />
-            <StatisticsLine text="bad" value={bad} />
-            <StatisticsLine text="all" value={total} />
-            <StatisticsLine text="average" value={average} />
-            <StatisticsLine text="positive" value={positive} />
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Statistics</th>
+                </tr>
+            </thead>
+            <tbody>
+                <StatisticsLine text="good" value={good} />
+                <StatisticsLine text="neutral" value={neutral} />
+                <StatisticsLine text="bad" value={bad} />
+                <StatisticsLine text="all" value={total} />
+                <StatisticsLine text="average" value={average} />
+                <StatisticsLine text="positive" value={positive + "%"} />
+            </tbody>
+        </table>
     )
 }
 const App = () => {
