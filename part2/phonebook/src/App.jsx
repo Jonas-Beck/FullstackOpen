@@ -1,5 +1,47 @@
 import { useState } from "react"
 
+const Filter = ({ value, onChange }) => {
+    return (
+        <div>
+            filer shown with <input value={value} onChange={onChange}></input>
+        </div>
+    )
+}
+
+const Person = ({ name, number }) => {
+    return (
+        <li>
+            {name} {number}
+        </li>
+    )
+}
+
+const Persons = ({ persons }) => {
+    return (
+        <ul>
+            {persons.map((person) => (
+                <Person key={person.id} name={person.name} number={person.number} />
+            ))}
+        </ul>
+    )
+}
+
+const PersonForm = ({ onSubmit, nameValue, nameChange, numberValue, NumberChange }) => {
+    return (
+        <form onSubmit={onSubmit}>
+            <div>
+                name: <input value={nameValue} onChange={nameChange} />
+            </div>
+            <div>
+                number: <input value={numberValue} onChange={NumberChange} />
+            </div>
+            <div>
+                <button type="submit">add</button>
+            </div>
+        </form>
+    )
+}
+
 const App = () => {
     const [persons, setPersons] = useState([
         { name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -11,14 +53,15 @@ const App = () => {
     const [newNumber, setNewNumber] = useState("")
     const [searchFilter, setSearchFilter] = useState("")
 
-    const personToShow = searchFilter.length == 0 ? persons : persons.filter((person) => person.name.toLowerCase().includes(searchFilter.toLowerCase()))
+    const personsToShow =
+        searchFilter.length == 0 ? persons : persons.filter((person) => person.name.toLowerCase().includes(searchFilter.toLowerCase()))
 
     const addPerson = (event) => {
         event.preventDefault()
         if (persons.some((person) => person.name === newName)) {
             alert(`${newName} is already added to phonebook`)
         } else {
-            setPersons(persons.concat({ name: newName, number: newNumber, id:persons.length + 1}))
+            setPersons(persons.concat({ name: newName, number: newNumber, id: persons.length + 1 }))
             setNewName("")
             setNewNumber("")
         }
@@ -39,29 +82,17 @@ const App = () => {
     return (
         <div>
             <h2>Phonebook</h2>
-            <div>
-              filter shown with <input value={searchFilter} onChange={handleFilterChange} ></input>
-            </div>
-            <h2>add a new</h2>
-            <form onSubmit={addPerson}>
-                <div>
-                    name: <input value={newName} onChange={handlePersonChange} />
-                </div>
-                <div>
-                    number: <input value={newNumber} onChange={handleNumberChange} />
-                </div>
-                <div>
-                    <button type="submit">add</button>
-                </div>
-            </form>
-            <h2>Numbers</h2>
-            <ul>
-                {personToShow.map((person) => (
-                    <li key={person.id}>
-                        {person.name} {person.number}
-                    </li>
-                ))}
-            </ul>
+            <Filter value={searchFilter} onChange={handleFilterChange} />
+            <h3>add a new</h3>
+            <PersonForm
+                onSubmit={addPerson}
+                nameValue={newName}
+                nameChange={handlePersonChange}
+                numberValue={newNumber}
+                NumberChange={handleNumberChange}
+            />
+            <h3>Numbers</h3>
+            <Persons persons={personsToShow} />
         </div>
     )
 }
