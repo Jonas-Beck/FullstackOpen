@@ -50,13 +50,11 @@ const App = () => {
     const [searchFilter, setSearchFilter] = useState("")
 
     const hook = () => {
-        axios.get("http://localhost:3001/persons").then(response => {
+        axios.get("http://localhost:3001/persons").then((response) => {
             setPersons(response.data)
         })
     }
-
     useEffect(hook, [])
-
 
     const personsToShow =
         searchFilter.length == 0 ? persons : persons.filter((person) => person.name.toLowerCase().includes(searchFilter.toLowerCase()))
@@ -66,9 +64,17 @@ const App = () => {
         if (persons.some((person) => person.name === newName)) {
             alert(`${newName} is already added to phonebook`)
         } else {
-            setPersons(persons.concat({ name: newName, number: newNumber, id: persons.length + 1 }))
-            setNewName("")
-            setNewNumber("")
+            const personObject = {
+                name: newName,
+                number: newNumber,
+                id: persons.length + 1,
+            }
+
+            axios.post("http://localhost:3001/persons", personObject).then((response) => {
+                setPersons(persons.concat(personObject))
+                setNewName("")
+                setNewNumber("")
+            })
         }
     }
 
