@@ -1,61 +1,16 @@
 import { useState, useEffect } from "react"
 import personServices from "./services/persons"
 import Notification from "./components/Notification"
-
-const Filter = ({ value, onChange }) => {
-    return (
-        <div>
-            filer shown with <input value={value} onChange={onChange}></input>
-        </div>
-    )
-}
-
-const Person = ({ name, number, handlePersonDelete }) => {
-    return (
-        <li>
-            {name} {number}
-            <button onClick={handlePersonDelete}>Delete</button>
-        </li>
-    )
-}
-
-const Persons = ({ persons, handlePersonDelete }) => {
-    return (
-        <ul>
-            {persons.map((person) => (
-                <Person
-                    key={person.id}
-                    name={person.name}
-                    number={person.number}
-                    handlePersonDelete={() => handlePersonDelete(person.id)}
-                />
-            ))}
-        </ul>
-    )
-}
-
-const PersonForm = ({ onSubmit, nameValue, nameChange, numberValue, NumberChange }) => {
-    return (
-        <form onSubmit={onSubmit}>
-            <div>
-                name: <input value={nameValue} onChange={nameChange} />
-            </div>
-            <div>
-                number: <input value={numberValue} onChange={NumberChange} />
-            </div>
-            <div>
-                <button type="submit">add</button>
-            </div>
-        </form>
-    )
-}
+import Filter from "./components/Filter"
+import Persons from "./components/Persons"
+import PersonForm from "./components/PersonForm"
 
 const App = () => {
     const [persons, setPersons] = useState([])
     const [newName, setNewName] = useState("")
     const [newNumber, setNewNumber] = useState("")
     const [searchFilter, setSearchFilter] = useState("")
-    const [notificationMessage, setNotificationMessage] = useState({ message: null, type: null})
+    const [notificationMessage, setNotificationMessage] = useState({ message: null, type: null })
 
     const hook = () => {
         personServices.getAll().then((initalPersons) => {
@@ -78,13 +33,22 @@ const App = () => {
             if (window.confirm(`${personObject.name} is already added to phonebook, replace the old number with a new one?`)) {
                 const personID = persons.find((person) => person.name == personObject.name).id
 
-                personServices.update(personID, personObject).then((returnedPerson) => {
-                    setPersons(persons.map((person) => (person.id !== personID ? person : returnedPerson)))
-                    setNewName("")
-                    setNewNumber("")
+                personServices
+                    .update(personID, personObject)
+                    .then((returnedPerson) => {
+                        setPersons(persons.map((person) => (person.id !== personID ? person : returnedPerson)))
+                        setNewName("")
+                        setNewNumber("")
 
-                    showNotification(`Updated ${returnedPerson.name} number to ${returnedPerson.number}`)
-                })
+                        showNotification(`Updated ${returnedPerson.name} number to ${returnedPerson.number}`)
+                    })
+                    .catch(() => {
+                        showNotification(`${personObject.name} was already removed from server`, "error")
+
+                        setPersons(persons.filter((person) => person.id !== personID))
+                        setNewName("")
+                        setNewNumber("")
+                    })
             }
         } else {
             personServices.create(personObject).then((returnedPerson) => {
@@ -112,19 +76,26 @@ const App = () => {
         const personObject = persons.find((person) => person.id === id)
 
         if (window.confirm(`Delete ${personObject.name} ?`)) {
-            personServices.remove(id).then(() => {
-                setPersons(persons.filter((person) => person.id !== id))
+            personServices
+                .remove(id)
+                .then(() => {
+                    setPersons(persons.filter((person) => person.id !== id))
 
-                showNotification(`Deleted ${personObject.name}`, "success")
-            })
+                    showNotification(`Deleted ${personObject.name}`, "success")
+                })
+                .catch(() => {
+                    showNotification(`${personObject.name} was already removed from server`, "error")
+
+                    setPersons(persons.filter((person) => person.id !== id))
+                })
         }
     }
 
     const showNotification = (message, type) => {
-        setNotificationMessage({ message: message, type: type})
+        setNotificationMessage({ message: message, type: type })
 
         setTimeout(() => {
-            setNotificationMessage({message: null, type: null})
+            setNotificationMessage({ message: null, type: null })
         }, 5000)
     }
 
