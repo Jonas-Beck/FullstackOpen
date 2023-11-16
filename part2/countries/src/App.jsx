@@ -15,29 +15,45 @@ function App() {
         })
     }, [])
 
-    const handleSearchChange =  (event) => {
-
+    const handleSearchChange = (event) => {
         // Local variable for countries that match input field text
         const searchCountriesFound = allCountries.filter((country) => country.includes(event.target.value.toLowerCase()))
 
         // Update the state of searchCountries
         setSearchCountries(searchCountriesFound)
 
-        // Display or Disable activeCountry based on length of countries that match 
+        // Display or Disable activeCountry based on length of countries that match
         searchCountriesFound.length === 1 ? displayCountry(searchCountriesFound[0]) : setActiveCountry(null)
-
     }
 
+    /**
+     * Sets activeCountry to country object of parameter
+     *
+     * @param {string} country - The name of the country to add to activeCountry
+     */
     const displayCountry = (country) => {
+        // Fetch the country information and set it as the active country
         countryServices.getCountry(country).then((countryObject) => {
             setActiveCountry(countryObject)
         })
     }
 
+    /**
+     * Toggles the value of activeCountry based on the provided country name.
+     *
+     * @param {string} country - The name of the country to add to or remove from activeCountry.
+     */
+    const toggleActiveCountry = (country) =>
+        activeCountry?.name.common.toLowerCase() == country ? setActiveCountry(null) : displayCountry(country)
+
     return (
         <div>
             <CountrySearch onChange={handleSearchChange} />
-            <CountryList countryList={searchCountries} />
+            <CountryList
+                countryArray={searchCountries}
+                toggleCountry={toggleActiveCountry}
+                activeCountryName={activeCountry?.name.common.toLowerCase()}
+            />
             <CountryDisplay country={activeCountry} />
         </div>
     )
