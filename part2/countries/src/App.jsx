@@ -15,16 +15,22 @@ function App() {
         })
     }, [])
 
-    const handleSearchChange = (event) => {
-        setSearchCountries(allCountries.filter((country) => country.includes(event.target.value.toLowerCase())))
+    const handleSearchChange =  (event) => {
 
-        // Not working as intended
-        searchCountries.length == 1 ? displayCountry() : setActiveCountry(null)
+        // Local variable for countries that match input field text
+        const searchCountriesFound = allCountries.filter((country) => country.includes(event.target.value.toLowerCase()))
+
+        // Update the state of searchCountries
+        setSearchCountries(searchCountriesFound)
+
+        // Display or Disable activeCountry based on length of countries that match 
+        searchCountriesFound.length === 1 ? displayCountry(searchCountriesFound[0]) : setActiveCountry(null)
+
     }
 
-    const displayCountry = () => {
-        countryServices.getCountry(searchCountries[0]).then((country) => {
-            setActiveCountry(country)
+    const displayCountry = (country) => {
+        countryServices.getCountry(country).then((countryObject) => {
+            setActiveCountry(countryObject)
         })
     }
 
