@@ -21,7 +21,7 @@ const Country = ({ name, toggleCountry, active }) => {
  *
  * This component displays a list of countries based on the provided array.
  * It includes conditional rendering for different scenarios:
- * - If there is only one country, it returns null to empty the input.
+ * - If there is only one country, it returns null to not show anything
  * - If there are too many matches (more than 10), it displays a message to specify another filter.
  * - Otherwise, it maps over the countryArray to render individual Country components.
  *
