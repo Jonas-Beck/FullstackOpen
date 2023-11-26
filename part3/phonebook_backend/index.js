@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 
-const phonebookData = [
+let phonebookData = [
     {
         id: 1,
         name: "Arto Hellas",
@@ -45,6 +45,14 @@ app.get("/api/persons/:id", (request, respond) => {
     PhoneInfo ? respond.json(PhoneInfo) : respond.status(404).end()
 })
 
+//phonebook backend step4
+// Delete phonebook entry by id
+app.delete("/api/persons/:id", (request, response) => {
+    const id = Number(request.params.id)
+    phonebookData = phonebookData.filter(data => data.id !== id) 
+
+    response.status(204).end()
+})
 
 
 const PORT = 3001
