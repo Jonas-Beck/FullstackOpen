@@ -1,6 +1,8 @@
 const express = require("express")
 const app = express()
 
+app.use(express.json())
+
 let phonebookData = [
     {
         id: 1,
@@ -24,6 +26,13 @@ let phonebookData = [
     },
 ]
 
+// Method for generating a new unique id
+const generateId = () => {
+    const maxId = phonebookData.length > 0 ? Math.max(...phonebookData.map((n) => n.id)) : 0
+
+    return maxId + 1
+}
+
 // Phonebook Backend Step1
 // Get all phonebook entries
 app.get("/api/persons", (request, response) => {
@@ -31,29 +40,44 @@ app.get("/api/persons", (request, response) => {
 })
 
 // Phonebook backend Step2
-// Return page with count of phonebook entires and time of request 
+// Return page with count of phonebook entires and time of request
 app.get("/info", (request, respone) => {
-    respone.send(`<p>Phonebook has info for ${phonebookData.length} people</p><p>${Date = new Date()}</p>`)
+    respone.send(`<p>Phonebook has info for ${phonebookData.length} people</p><p>${(Date = new Date())}</p>`)
 })
 
 // Phonebook backend step3
 // Get single phonebook entry
 app.get("/api/persons/:id", (request, respond) => {
     const id = Number(request.params.id)
-    const PhoneInfo = phonebookData.find(data => data.id === id)
+    const PhoneInfo = phonebookData.find((data) => data.id === id)
 
     PhoneInfo ? respond.json(PhoneInfo) : respond.status(404).end()
 })
 
-//phonebook backend step4
+// Phonebook backend step4
 // Delete phonebook entry by id
 app.delete("/api/persons/:id", (request, response) => {
     const id = Number(request.params.id)
-    phonebookData = phonebookData.filter(data => data.id !== id) 
+    phonebookData = phonebookData.filter((data) => data.id !== id)
 
     response.status(204).end()
 })
 
+// Phonebook backend step5
+// Add phonebook entry
+app.post("/api/persons", (request, response) => {
+    const body = request.body
+
+    const newEntry = {
+        id: generateId(),
+        name: body.name,
+        number: body.number,
+    }
+
+    phonebookData.push(newEntry)
+
+    response.json(newEntry)
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
