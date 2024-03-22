@@ -56,8 +56,8 @@ app.get("/api/persons", (request, response) => {
 
 // Phonebook backend Step2
 // Return page with count of phonebook entires and time of request
-app.get("/info", (request, respone) => {
-    respone.send(`<p>Phonebook has info for ${phonebookData.length} people</p><p>${(Date = new Date())}</p>`)
+app.get("/info", (request, response) => {
+    response.send(`<p>Phonebook has info for ${phonebookData.length} people</p><p>${(new Date())}</p>`)
 })
 
 // Phonebook backend step3
