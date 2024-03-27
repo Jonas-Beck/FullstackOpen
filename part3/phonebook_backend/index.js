@@ -72,7 +72,7 @@ app.get("/api/persons/:id", (request, response, next) => {
   Person.findById(request.params.id).then((personInfo) => {
     personInfo ? response.json(personInfo) : response.status(404).end()
   })
-  .catch(error => next(error))
+    .catch(error => next(error))
 })
 
 // Phonebook backend step4
@@ -94,7 +94,7 @@ app.put("/api/persons/:id", (request, response, next) => {
     number: body.number
   }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+  Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: "query" })
     .then(updatedPerson => {
       response.json(updatedPerson)
     })
@@ -132,7 +132,7 @@ const errorHandler = (error, request, response, next) => {
   }
 
   if (error.name === "ValidationError") {
-    return response.status(400).send({ error: "Name or Number missing" })
+    return response.status(400).send({ error: "Invalid name or number" })
   }
 
   next(error)
