@@ -81,6 +81,23 @@ app.delete("/api/persons/:id", (request, response, next) => {
     .catch(error => next(error))
 })
 
+
+// Update phonebook entry by id
+app.put("/api/persons/:id", (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson)
+    })
+    .catch(error => next(error))
+})
+
 // Phonebook backend step5
 // Add phonebook entry
 app.post("/api/persons", (request, response, next) => {
@@ -97,12 +114,6 @@ app.post("/api/persons", (request, response, next) => {
     })
     .catch(error => next(error))
 
-  // if (phonebookData.some(entry => entry.name === body.name)) {
-  //   return response.status(400).json({
-  //     error: "Entry with that name already exists",
-  //   })
-  // }
-
 })
 
 const PORT = process.env.PORT || 3001
@@ -117,8 +128,8 @@ const errorHandler = (error, request, response, next) => {
     return response.status(400).send({ error: "Malformated id" })
   }
 
-  if (error.name === "ValidationError"){
-    return response.status(400).send({ error: "Name or Number missing"})
+  if (error.name === "ValidationError") {
+    return response.status(400).send({ error: "Name or Number missing" })
   }
 
   next(error)
