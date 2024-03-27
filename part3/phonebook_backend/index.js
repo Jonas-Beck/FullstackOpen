@@ -1,6 +1,8 @@
+require("dotenv").config()
 const express = require("express")
 const morgan = require("morgan")
 const cors = require("cors")
+const Person = require("./models/person")
 
 const app = express()
 
@@ -55,7 +57,9 @@ const generateId = () => {
 // Phonebook Backend Step1
 // Get all phonebook entries
 app.get("/api/persons", (request, response) => {
-    response.json(phonebookData)
+    Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 // Phonebook backend Step2
