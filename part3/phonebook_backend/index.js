@@ -58,17 +58,21 @@ app.get("/api/persons", (request, response) => {
 
 // Phonebook backend Step2
 // Return page with count of phonebook entires and time of request
-app.get("/info", (request, response) => {
-  response.send(`<p>Phonebook has info for ${phonebookData.length} people</p><p>${(new Date())}</p>`)
+app.get("/info", (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      response.send(`<p>Phonebook has info for ${count} people</p><p>${(new Date())}</p>`)
+    })
+    .catch(error => next(error))
 })
 
 // Phonebook backend step3
 // Get single phonebook entry
-app.get("/api/persons/:id", (request, respond) => {
-  const id = Number(request.params.id)
-  const PhoneInfo = phonebookData.find((data) => data.id === id)
-
-  PhoneInfo ? respond.json(PhoneInfo) : respond.status(404).end()
+app.get("/api/persons/:id", (request, response, next) => {
+  Person.findById(request.params.id).then((personInfo) => {
+    personInfo ? response.json(personInfo) : response.status(404).end()
+  })
+  .catch(error => next(error))
 })
 
 // Phonebook backend step4
@@ -80,7 +84,6 @@ app.delete("/api/persons/:id", (request, response, next) => {
     })
     .catch(error => next(error))
 })
-
 
 // Update phonebook entry by id
 app.put("/api/persons/:id", (request, response, next) => {
