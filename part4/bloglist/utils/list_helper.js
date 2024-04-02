@@ -34,20 +34,15 @@ const mostBlogs = (blogs) => {
     return null;
   }
 
-  // Create a map to store authors blogs count
-  // Using Author name as key and total of blogs as value
-  const authorBlogsMap = new Map();
-
-  blogs.forEach((blog) => {
-    // Loop all blogs and add new element to the map with value of 1 or increment the value of the existing element
-    authorBlogsMap.set(blog.author, (authorBlogsMap.get(blog.author) || 0) + 1);
-  });
-
-  // Use reduce on 2D array of authorBlogsMap containing key and value.
-  const reduceResult = [...authorBlogsMap.entries()].reduce(
-    (a, e) => (a[1] >= e[1] ? a : e),
-    // Returns array with highest value
+  // Create map using aggregateMapFromList containing all authors as keys with total count of blogs as value
+  const authorBlogsMap = aggregateMapFromList(
+    blogs, // List to craate map from
+    (blog) => blog.author, // Function that return property to use as key
+    () => 1, // Function that return increment amount
   );
+
+  // Get array containing Key and Value of the highest Value
+  const reduceResult = getHighestMapValueWithKey(authorBlogsMap);
 
   // Return corretly formated object
   return {
@@ -56,9 +51,70 @@ const mostBlogs = (blogs) => {
   };
 };
 
+const mostLikes = (blogs) => {
+  // Check if blogs is empty or undefined
+  if (!blogs || blogs.length === 0) {
+    return null;
+  }
+
+  // Create map using aggregateMapFromList containing all authors as keys with total count of blogs as value
+  const authorLikesMap = aggregateMapFromList(
+    blogs, // List to create map from
+    (blog) => blog.author, // Function that return property to use as key
+    (blog) => blog.likes, // Function that return increment amount
+  );
+
+  // Get array containing Key and Value of the highest Value
+  const reduceResult = getHighestMapValueWithKey(authorLikesMap);
+
+  return {
+    author: reduceResult[0],
+    likes: reduceResult[1],
+  };
+};
+
+/**
+ * Takes a map with number values and returns an array containing the key and value of the highest value.
+ *
+ * @param {Map} map - The map with number values.
+ * @returns {Array} An array containing the key and value of the highest value in the map.
+ */
+const getHighestMapValueWithKey = (map) => {
+  // Use reduce on 2D array of provided map containing key and value.
+  return [...map.entries()].reduce(
+    (a, e) => (a[1] >= e[1] ? a : e),
+    // Returns array with highest value
+  );
+};
+
+/**
+ * Creates an aggregate map from a list of entries.
+ * @param {Array} list - The list of entries to aggregate.
+ * @param {Function} keyFunction - A function that returns the key for each entry.
+ * @param {Function} valueIncrementFunction - A function that determines how the value should be incremented for each entry.
+ * @returns {Map} The aggregate map.
+ */
+const aggregateMapFromList = (list, keyFunction, valueIncrementFunction) => {
+  // Create map to return
+  const map = new Map();
+
+  // Loop all entries in the list
+  list.forEach((entry) => {
+    // Get the key value using provided function
+    const key = keyFunction(entry);
+    // Get the incrementValue using provided function
+    const incrementValue = valueIncrementFunction(entry);
+    // Loop all entries and add new element to the map with value == incrementValue or increment the value of the existing element using incrementValue
+    map.set(key, (map.get(key) || 0) + incrementValue);
+  });
+
+  return map;
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };

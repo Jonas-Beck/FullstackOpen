@@ -169,3 +169,45 @@ describe("most blogs", () => {
     assert.deepStrictEqual(result, expectedResult);
   });
 });
+
+describe("most likes", () => {
+  test("should return null if list is empty", () => {
+    const result = listHelper.mostLikes(emptyList);
+    assert.strictEqual(result, null);
+  });
+
+  test("should return null when no list is provided", () => {
+    const result = listHelper.mostLikes();
+    assert.strictEqual(result, null);
+  });
+
+  test("when list has only one blog it should return that auther with total likes", () => {
+    const expectedResult = {
+      author: "Tiago Forte",
+      likes: 5,
+    };
+
+    const result = listHelper.mostLikes(listWithOneBlog);
+    assert.deepStrictEqual(result, expectedResult);
+  });
+
+  test("when list has multiple blogs should return author with most likes", () => {
+    const expectedResult = {
+      author: "Edsger W. Dijkstra",
+      likes: 17,
+    };
+
+    const result = listHelper.mostLikes(bigList);
+    assert.deepStrictEqual(result, expectedResult);
+  });
+
+  test("when list have two author with same amount of likes should return first author", () => {
+    const expectedResult = {
+      author: "Tiago Forte",
+      likes: 5,
+    };
+
+    const result = listHelper.mostLikes(listWithTwoFavorites);
+    assert.deepStrictEqual(result, expectedResult);
+  });
+});
