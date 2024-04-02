@@ -57,7 +57,7 @@ const listWithTwoFavorites = [
   },
   {
     title: "TDD harms architecture",
-    author: "Robert C. Martin",
+    author: "Robert Martin",
     url: "http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html",
     likes: 0,
   },
@@ -125,5 +125,47 @@ describe("favorite blog", () => {
   test("when list have two blogs with most likes should return the first one", () => {
     const result = listHelper.favoriteBlog(listWithTwoFavorites);
     assert.deepStrictEqual(result, listWithTwoFavorites[0]);
+  });
+});
+
+describe("most blogs", () => {
+  test("should return null if list is empty", () => {
+    const result = listHelper.mostBlogs(emptyList);
+    assert.strictEqual(result, null);
+  });
+
+  test("should return null when no list is provided", () => {
+    const result = listHelper.mostBlogs();
+    assert.strictEqual(result, null);
+  });
+
+  test("when list has only one blog it should return that auther with 1 blog", () => {
+    const expectedResult = {
+      author: "Tiago Forte",
+      blogs: 1,
+    };
+
+    const result = listHelper.mostBlogs(listWithOneBlog);
+    assert.deepStrictEqual(result, expectedResult);
+  });
+
+  test("when list has multiple blogs should return author with most blogs", () => {
+    const expectedResult = {
+      author: "Robert C. Martin",
+      blogs: 3,
+    };
+
+    const result = listHelper.mostBlogs(bigList);
+    assert.deepStrictEqual(result, expectedResult);
+  });
+
+  test("when list have two author with same amount of blogs should return first author", () => {
+    const expectedResult = {
+      author: "Tiago Forte",
+      blogs: 1,
+    };
+
+    const result = listHelper.mostBlogs(listWithTwoFavorites);
+    assert.deepStrictEqual(result, expectedResult);
   });
 });
