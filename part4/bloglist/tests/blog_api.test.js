@@ -93,6 +93,30 @@ test("Validate that likes property defaults to 0", async () => {
   assert.strictEqual(lastBlog.likes, 0);
 });
 
+test("Validate that blogs without title return 400 bad request", async () => {
+  // Blog to add
+  const newBlog = {
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12,
+  };
+
+  // Add blog and expect a 400 return
+  await api.post("/api/blogs").send(newBlog).expect(400);
+});
+
+test("Validate that blogs without url return 400 bad request", async () => {
+  // Blog to add
+  const newBlog = {
+    author: "Edsger W. Dijkstra",
+    title: "Canonical string reduction",
+    likes: 12,
+  };
+
+  // Add blog and expect a 400 return
+  await api.post("/api/blogs").send(newBlog).expect(400);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });

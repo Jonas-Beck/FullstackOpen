@@ -1,10 +1,12 @@
 const express = require("express");
+require("express-async-errors");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const app = express();
 const { MONGODB_URI } = require("./utils/config");
 const logger = require("./utils/logger");
 const blogsRouters = require("./controller/blogs");
+const { errorHandler } = require("./utils/errorHandler");
 
 mongoose.set("strictQuery", false);
 
@@ -23,5 +25,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/blogs", blogsRouters);
+
+app.use(errorHandler);
 
 module.exports = app;
