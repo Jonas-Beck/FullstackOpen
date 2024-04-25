@@ -39,6 +39,36 @@ test("Correct name id property", async () => {
   assert.strictEqual("_id" in response.body[0], false);
 });
 
+test("Creates a new blog succesfully", async () => {
+  // Blog to add
+  const newBlog = {
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+    likes: 12,
+  };
+
+  // Add blog
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  // Retrieve all blogs
+  const response = await api.get("/api/blogs");
+  const content = response.body;
+
+  // Assert new blog has been added
+  assert.strictEqual(content.length, helper.initialBlogs.length + 1);
+
+  // Remove id property to assert below
+  delete content[content.length - 1].id;
+
+  // Assert last object is the same as blog added
+  assert.deepStrictEqual(content[content.length - 1], newBlog);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
