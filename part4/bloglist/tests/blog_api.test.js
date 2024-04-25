@@ -30,6 +30,15 @@ test("Returns correct amount of blogs", async () => {
   assert.strictEqual(response.body.length, helper.initialBlogs.length);
 });
 
+test("Correct name id property", async () => {
+  const response = await api.get("/api/blogs");
+
+  // Validate that id property exist in the objects
+  assert.strictEqual("id" in response.body[0], true);
+  // Validate that the mongodb _id property dosen't exist
+  assert.strictEqual("_id" in response.body[0], false);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
