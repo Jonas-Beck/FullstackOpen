@@ -13,6 +13,9 @@ const initialBlogs = [
   },
 ];
 
+const getLastBlog = (blogs) => blogs[blogs.length - 1];
+
 module.exports = {
   initialBlogs,
+  getLastBlog,
 };

@@ -58,15 +58,39 @@ test("Creates a new blog succesfully", async () => {
   // Retrieve all blogs
   const response = await api.get("/api/blogs");
   const content = response.body;
+  const lastBlog = helper.getLastBlog(content);
 
   // Assert new blog has been added
   assert.strictEqual(content.length, helper.initialBlogs.length + 1);
 
   // Remove id property to assert below
-  delete content[content.length - 1].id;
+  delete lastBlog.id;
 
   // Assert last object is the same as blog added
-  assert.deepStrictEqual(content[content.length - 1], newBlog);
+  assert.deepStrictEqual(lastBlog, newBlog);
+});
+
+test("Validate that likes property defaults to 0", async () => {
+  // Blog to add
+  const newBlog = {
+    title: "Canonical string reduction",
+    author: "Edsger W. Dijkstra",
+    url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
+  };
+
+  // Add blog
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  // Get blogs
+  const response = await api.get("/api/blogs");
+  const lastBlog = helper.getLastBlog(response.body);
+
+  // Assert last blogs likes is the default value
+  assert.strictEqual(lastBlog.likes, 0);
 });
 
 after(async () => {
