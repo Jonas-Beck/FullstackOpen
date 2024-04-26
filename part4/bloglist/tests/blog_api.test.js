@@ -117,6 +117,13 @@ test("Validate that blogs without url return 400 bad request", async () => {
   await api.post("/api/blogs").send(newBlog).expect(400);
 });
 
+test("Validate that a blog can be deleted correctly", async () => {
+  const response = await api.get("/api/blogs");
+  const id = response.body[0].id;
+
+  await api.delete(`/api/blogs/${id}`).expect(204);
+});
+
 after(async () => {
   await mongoose.connection.close();
 });
