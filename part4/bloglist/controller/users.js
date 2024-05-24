@@ -2,6 +2,15 @@ const bcrypt = require("bcrypt");
 const usersRouters = require("express").Router();
 const User = require("../models/user");
 
+const validPasswordLength = (password) => {
+  return (
+    password.length >=
+    User.schema
+      .path("passwordHash")
+      .validators.find((v) => v.type === "minlength").minlength
+  );
+};
+
 usersRouters.get("/", async (_request, response) => {
   const users = await User.find({});
   response.json(users);
@@ -11,9 +20,11 @@ usersRouters.post("/", async (request, response) => {
   // Deconstruct body
   const { username, name, password } = request.body;
 
-  const saltRounds = 10;
+  if (!validPasswordLength(password)) {
+    response.status(400).send({ error: "Invalid password length" });
+  }
 
-  console.log(username, name, password);
+  const saltRounds = 10;
 
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
