@@ -1,5 +1,6 @@
 const { test, after, beforeEach, describe } = require("node:test");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const assert = require("node:assert");
 const mongoose = require("mongoose");
 const supertest = require("supertest");
@@ -9,8 +10,13 @@ const app = require("../app");
 const api = supertest(app);
 
 beforeEach(async () => {
-  // Delete all blogs from database
+  // Delete all blogs and users from database
   await Blog.deleteMany({});
+  await User.deleteMany({});
+
+  // Create a user
+  const user = new User(helper.initialUser);
+  user.save();
 
   // Array of all blogs from the initialBlogs array
   const blogObjects = helper.initialBlogs.map((blog) => new Blog(blog));
@@ -70,6 +76,7 @@ describe("Blog API CRUD Operations", () => {
 
       // Remove id property to assert below
       delete lastBlog.id;
+      delete lastBlog.user;
 
       // Assert last object is the same as blog added
       assert.deepStrictEqual(lastBlog, newBlog);

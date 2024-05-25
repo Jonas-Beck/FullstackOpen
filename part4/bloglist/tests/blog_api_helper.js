@@ -15,6 +15,12 @@ const initialBlogs = [
   },
 ];
 
+const initialUser = {
+  username: "firstname",
+  name: "name",
+  passwordHash: "secretpassword",
+};
+
 const getLastBlog = (blogs) => blogs[blogs.length - 1];
 
 const getLastBlogInDb = async () => {
@@ -33,4 +39,5 @@ module.exports = {
   getLastBlog,
   getBlogsInDb,
   getLastBlogInDb,
+  initialUser,
 };
